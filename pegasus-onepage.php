@@ -1,5 +1,5 @@
 <?php
-	/*
+/*
 Plugin Name: Pegasus One Page Plugin
 Plugin URI:  https://developer.wordpress.org/plugins/the-basics/
 Description: This allows you to create a one page template on your website with just a shortcode.
