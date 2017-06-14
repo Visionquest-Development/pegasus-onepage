@@ -28,15 +28,19 @@ Domain Path: /languages
 	function pegasus_one_page_plugin_settings_page() { ?>
 	    <div class="wrap pegasus-wrap">
 	    <h1>One page</h1>
-		<?php /* ?>
+		
 		<form method="post" action="options.php">
 	        <?php
 	            settings_fields("section");
 	            do_settings_sections("theme-options");      
 	            submit_button(); 
 	        ?>          
+			<?php 
+				//$selected_page = get_option( 'pegasus_onepage_page_select' );
+				//echo $selected_page;
+			?>
 	    </form>
-		<?php */ ?>
+		
 		
 			
 			<p>Section shortcode Usage: <pre>[section id="services" class="testing"]Sed porttitor lectus nibh. Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Vivamus suscipit tortor eget felis porttitor volutpat. Curabitur aliquet quam id dui posuere blandit. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Donec sollicitudin molestie malesuada.[/section][section id="picture" class="test" bkg_color="#dedede"]<?php echo htmlspecialchars('<img src="http://www.fillmurray.com/960/550">'); ?>[/section][section id="picture" class="test" bkg="http://www.fillmurray.com/960/550" ]Pellentesque in ipsum id orci porta dapibus. Nulla quis lorem ut libero malesuada feugiat. Cras ultricies ligula sed magna dictum porta. Quisque velit nisi, pretium ut lacinia in, elementum id enim. Vivamus suscipit tortor eget felis porttitor volutpat. Pellentesque in ipsum id orci porta dapibus.[/section]</pre></p>
@@ -60,6 +64,10 @@ Domain Path: /languages
 		<?php
 	} */
 	
+	/* add_filter( 'body_class', function( $classes ) {
+		return array_merge( $classes, array( 'scroll-active' ) );
+	} ); */
+	
 	function pegasus_one_page_plugin_styles() {
 		
 		wp_enqueue_style( 'one-page-css', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'css/one-page.css', array(), null, 'all' );
@@ -68,6 +76,46 @@ Domain Path: /languages
 	}
 	add_action( 'wp_enqueue_scripts', 'pegasus_one_page_plugin_styles' );
 	
+	
+	function onepage_page_select_option() { ?>
+		<select name="pegasus_onepage_page_select"> 
+			<option selected="selected" disabled="disabled" value=""><?php echo esc_attr( __( 'Select page' ) ); ?></option> 
+			<?php
+				$selected_page = get_option( 'pegasus_onepage_page_select' );
+				$pages = get_pages(); 
+				foreach ( $pages as $page ) {
+					$option = '<option value="' . $page->ID . '" ';
+					$option .= ( $page->ID == $selected_page ) ? 'selected="selected"' : '';
+					$option .= '>';
+					$option .= $page->post_title;
+					$option .= '</option>';
+					echo $option;
+				}
+			?>
+		</select>
+
+		
+		<?php
+	}
+	
+	function display_onepage_plugin_panel_fields() { 
+		add_settings_section("section", "Shortcode Settings", null, "theme-options");
+	
+		add_settings_field("pegasus_onepage_page_select", "Select page to render on:", "onepage_page_select_option", "theme-options", "section");
+		
+		/*================
+		REGISTER SETTINGS
+		=================*/
+
+		register_setting("section", "pegasus_onepage_page_select");
+		
+	}
+	add_action("admin_init", "display_onepage_plugin_panel_fields");
+	
+	
+	
+	
+	
 	/**
 	* Proper way to enqueue JS 
 	*/
@@ -75,12 +123,95 @@ Domain Path: /languages
 		
 		//wp_enqueue_script( 'one-page-scroll-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/jquery.onepage-scroll.js', array( 'jquery' ), null, true );
 		//wp_enqueue_script( 'snap-scroll-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/jquery.snapscroll.js', array( 'jquery' ), null, true );
-		wp_enqueue_script( 'scrollspy-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/scrollspy.js', array( 'jquery' ), null, true );
-		wp_enqueue_script( 'scrollify-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/scrollify.js', array( 'jquery' ), null, true );
-		wp_enqueue_script( 'pegasus-one-page-plugin-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/plugin.js', array( 'jquery' ), null, true );
 		
+		$selected_page = get_option( 'pegasus_onepage_page_select' );
+		
+		$check_page_value = ( isset($selected_page) ? $selected_page : 'home' ); 
+		
+		if ( is_page( $check_page_value ) ) { 
+			wp_enqueue_script( 'scrollspy-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/scrollspy.js', array( 'jquery' ), null, true );
+			
+			wp_enqueue_script( 'scrollify-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/scrollify.js', array( 'jquery' ), null, true );
+			
+			wp_enqueue_script( 'pegasus-one-page-plugin-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/plugin.js', array( 'jquery' ), null, true );
+		}
 	} //end function
-	add_action( 'wp_enqueue_scripts', 'pegasus_one_page_plugin_js' );
+	
+	add_action( 'wp_enqueue_scripts', 'pegasus_one_page_plugin_js' ); 
+	
+	
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~META BOXES~~~~~~~~~~~~~~~~~~~~~~~~
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	/*--- Demo URL meta box ---*/
+	/*
+	add_action('admin_init','onepage_meta_init');
+	 
+	function onepage_meta_init() {
+		// add a meta box for WordPress 'project' type
+		//add_meta_box('onepage_meta', 'onepage Options', 'onepage_meta_setup', 'onepage', 'side', 'high');
+		add_meta_box('onepage_meta', 'OnePage plugin Options', 'onepage_meta_setup', 'page', 'normal', 'high');
+	  
+		// add a callback function to save any data a user enters in
+		add_action('save_post','onepage_meta_save');
+	}
+	 
+	function onepage_meta_setup() {
+		global $post;
+		  
+		?>
+			<div class="onepage_meta_control">
+				<label for="_onepage_option">
+					<?php 
+						$onepage_option = get_post_meta($post->ID,'_onepage_option',TRUE); 
+						echo $onepage_option;
+						$echo_chk = 'checked="checked" ';
+					?>
+					<input type="checkbox" name="_onepage_option" id="onepage-option" value="yes" <?php checked( $onepage_option, 'yes', $echo_chk ); ?> />
+					<?php _e( 'Enable Scrollify for this Page', 'pegasus' )?>
+				</label>
+			</div>
+		<?php
+	 
+		// create for validation
+		echo '<input type="hidden" name="meta_noncename" value="' . wp_create_nonce(__FILE__) . '" />';
+	}
+	 
+	function onepage_meta_save($post_id) {
+		// check nonce
+		if (!isset($_POST['meta_noncename']) || !wp_verify_nonce($_POST['meta_noncename'], __FILE__)) {
+			return $post_id;
+		}
+	 
+		// check capabilities
+		if ('post' == $_POST['post_type']) {
+			if (!current_user_can('edit_post', $post_id)) {
+				return $post_id;
+			}
+		} elseif (!current_user_can('edit_page', $post_id)) {
+			return $post_id;
+		}
+	 
+		// exit on autosave
+		if (defined('DOING_AUTOSAVE') == DOING_AUTOSAVE) {
+			return $post_id;
+		}
+	 
+		
+		
+		// Checks for input and saves
+		if( isset( $_POST[ '_onepage_option' ] ) ) {
+			update_post_meta( $post_id, '_onepage_option', 'yes' );
+		} else {
+			update_post_meta( $post_id, '_onepage_option', '' );
+		}
+		
+	}
+	*/
+	/*--- #end  Demo URL meta box ---*/
+	
+	
+	
 	
 	/*~~~~~~~~~~~~~~~~~~~~
 		SECTION
