@@ -216,7 +216,7 @@ Domain Path: /languages
 		SECTION
 	~~~~~~~~~~~~~~~~~~~~~*/
 	// [section id="testimonials"] text [/section]
-	function octane_section_func( $atts, $content = null ) {
+	function pegasus_section_func( $atts, $content = null ) {
 		$a = shortcode_atts( array(
 			'id' => '#',
 			'class' => '',
@@ -251,5 +251,5 @@ Domain Path: /languages
 
 		return $output; 
 	}
-	add_shortcode( 'section', 'octane_section_func' );
+	add_shortcode( 'section', 'pegasus_section_func' );
 	
