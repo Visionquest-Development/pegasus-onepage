@@ -20,7 +20,7 @@ Domain Path: /languages
 	}
 
 	function pegasus_one_page_menu_item() {
-		add_menu_page("One page", "One page", "manage_options", "pegasus_one_page_plugin_options", "pegasus_one_page_plugin_settings_page", null, 99);
+		//add_menu_page("One page", "One page", "manage_options", "pegasus_one_page_plugin_options", "pegasus_one_page_plugin_settings_page", null, 99);
 		//add_submenu_page("pegasus_one_page_plugin_options", "Shortcode Usage", "Usage", "manage_options", "pegasus_one_page_plugin_shortcode_options", "pegasus_one_page_plugin_shortcode_settings_page" );
 	}
 	add_action("admin_menu", "pegasus_one_page_menu_item");
@@ -69,9 +69,8 @@ Domain Path: /languages
 	} ); */
 	
 	function pegasus_one_page_plugin_styles() {
-		
-		wp_enqueue_style( 'one-page-css', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'css/one-page.css', array(), null, 'all' );
-		//wp_enqueue_style( 'slippery-slider-css', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'css/slippery-slider.css', array(), null, 'all' );
+
+		wp_register_style( 'one-page-css', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'css/one-page.css', array(), null, 'all' );
 		
 	}
 	add_action( 'wp_enqueue_scripts', 'pegasus_one_page_plugin_styles' );
@@ -124,17 +123,17 @@ Domain Path: /languages
 		//wp_enqueue_script( 'one-page-scroll-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/jquery.onepage-scroll.js', array( 'jquery' ), null, true );
 		//wp_enqueue_script( 'snap-scroll-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/jquery.snapscroll.js', array( 'jquery' ), null, true );
 		
-		$selected_page = get_option( 'pegasus_onepage_page_select' );
+		//$selected_page = get_option( 'pegasus_onepage_page_select' );
 		
-		$check_page_value = ( isset($selected_page) ? $selected_page : 'home' ); 
+		//$check_page_value = ( isset($selected_page) ? $selected_page : 'home' );
 		
-		if ( is_page( $check_page_value ) ) { 
-			wp_enqueue_script( 'scrollspy-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/scrollspy.js', array( 'jquery' ), null, true );
-			
-			wp_enqueue_script( 'scrollify-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/scrollify.js', array( 'jquery' ), null, true );
-			
-			wp_enqueue_script( 'pegasus-one-page-plugin-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/plugin.js', array( 'jquery' ), null, true );
-		}
+		//if ( is_page( $check_page_value ) ) {
+		wp_register_script( 'scrollspy-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/scrollspy.js', array( 'jquery' ), null, 'all' );
+
+		wp_register_script( 'scrollify-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/scrollify.js', array( 'jquery' ), null, 'all' );
+
+		wp_register_script( 'pegasus-one-page-plugin-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/plugin.js', array( 'jquery' ), null, 'all' );
+		//}
 	} //end function
 	
 	add_action( 'wp_enqueue_scripts', 'pegasus_one_page_plugin_js' ); 
@@ -243,8 +242,13 @@ Domain Path: /languages
 				$output .= $content;
 			$output .= '</div>';
 		$output .= '</section>';
-		
-		
+
+
+		wp_enqueue_style( 'one-page-css' );
+		//wp_enqueue_script( 'scrollspy-js' );
+		//wp_enqueue_script( 'scrollify-js' );
+		//wp_enqueue_script( 'pegasus-one-page-plugin-js' );
+
 		return $output; 
 	}
 	add_shortcode( 'section', 'octane_section_func' );
