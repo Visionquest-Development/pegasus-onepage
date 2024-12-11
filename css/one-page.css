@@ -1,4 +1,8 @@
 
+  body.admin-bar .side {
+    padding-top: var(--pegasus-onepage-admin-bar-height);
+  }
+
 	/* ~~~~~~~~~~~~~~~~~~~~~~
 	~~~~~~~~~DOT NAVIGATION ~~~~~~~~
 	~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -6,7 +10,7 @@
 	  height: 100%;
 	  position: relative;
 	}
-	
+
 	.dotnav-right {
 	  right: 10px;
 	  top: 50%;
@@ -34,7 +38,6 @@
 
 	.dotnav > li > a {
 	  display: inline-block !important;
-	  -moz-box-sizing: content-box;
 	  box-sizing: content-box;
 	  width: 15px;
 	  height: 15px;
@@ -83,15 +86,19 @@
 	  border-top: 5px solid transparent;
 	  border-bottom: 5px solid transparent;
 	  border-left: 5px solid #512DA8;
-	 
+
 	}
 
 	/*======================
 		SECTION CSS
 	======================*/
 
+  /* body.admin-bar .side .section-container {
+    margin-top: var(--pegasus-onepage-admin-bar-height);
+  } */
+
 	.side {
-		float: left;
+		/* float: left; */
 		width: 100%;
 		font: 46px ralewaybold;
 		color: #fff;
@@ -132,3 +139,7 @@
 
 	}
 
+.section-container {
+  position: relative;
+  color: black;
+}
