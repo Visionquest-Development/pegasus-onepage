@@ -1,0 +1,16 @@
+{
+  "rows": [
+    {
+      "section_name": "One Page Settings",
+      "rows": [
+        {
+          "name": "Class",
+          "attribute": "class",
+          "options": "Any class name",
+          "description": "Add a class to the masonry container",
+          "example": "class=\"test\""
+        }
+      ]
+    }
+  ]
+}
