@@ -288,17 +288,23 @@ Domain Path: /languages
 		//wp_enqueue_script( 'one-page-scroll-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/jquery.onepage-scroll.js', array( 'jquery' ), null, true );
 		//wp_enqueue_script( 'snap-scroll-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/jquery.snapscroll.js', array( 'jquery' ), null, true );
 
-		//$selected_page = get_option( 'pegasus_onepage_page_select' );
+		$selected_page = get_option( 'pegasus_onepage_page_select' );
 
-		//$check_page_value = ( isset($selected_page) ? $selected_page : 'home' );
+		$check_page_value = ( isset($selected_page) ? $selected_page : 'home' );
 
-		//if ( is_page( $check_page_value ) ) {
-		wp_register_script( 'scrollspy-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/scrollspy.js', array( 'jquery' ), null, 'all' );
+		//convert to int
+		$check_page_value = intval( $check_page_value );
 
-		wp_register_script( 'scrollify-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/scrollify.js', array( 'jquery' ), null, 'all' );
+		var_dump( $check_page_value);
 
-		wp_register_script( 'pegasus-one-page-plugin-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/plugin.js', array( 'jquery' ), null, 'all' );
-		//}
+
+		if ( is_page( $check_page_value ) ) {
+			wp_register_script( 'scrollspy-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/scrollspy.js', array( 'jquery' ), null, 'all' );
+
+			wp_register_script( 'scrollify-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/scrollify.js', array( 'jquery' ), null, 'all' );
+
+			wp_register_script( 'pegasus-one-page-plugin-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/plugin.js', array( 'jquery' ), null, 'all' );
+		}
 	} //end function
 
 	add_action( 'wp_enqueue_scripts', 'pegasus_one_page_plugin_js' );
