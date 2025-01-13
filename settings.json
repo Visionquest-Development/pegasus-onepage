@@ -4,11 +4,39 @@
       "section_name": "One Page Settings",
       "rows": [
         {
+          "name": "ID",
+          "attribute": "id",
+          "options": "Any ID number",
+          "description": "Add an ID to the section",
+          "example": "id=\"test\""
+        },
+        {
           "name": "Class",
           "attribute": "class",
           "options": "Any class name",
-          "description": "Add a class to the masonry container",
+          "description": "Add a class to the One-Page section",
           "example": "class=\"test\""
+        },
+        {
+          "name": "Background Color",
+          "attribute": "bkg_color",
+          "options": "Any hex color",
+          "description": "Add a background color to the section",
+          "example": "bkg_color=\"#3498db\""
+        },
+        {
+          "name": "Text Color",
+          "attribute": "text_color",
+          "options": "Any hex color",
+          "description": "Change the text color of the section",
+          "example": "text_color=\"#ffffff\""
+        },
+        {
+          "name": "Image",
+          "attribute": "image",
+          "options": "Add an Image",
+          "description": "Add an image to the section",
+          "example": "image=\"https:\/\/example.com/image.png\""
         }
       ]
     }
