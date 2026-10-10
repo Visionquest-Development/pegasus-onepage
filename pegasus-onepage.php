@@ -135,13 +135,14 @@ Domain Path: /languages
 
 			<form method="post" action="options.php">
 				<?php
-					settings_fields("onepage_section");
-					do_settings_sections("onepage-theme-options");
-					submit_button();
+					//settings_fields("onepage_section");
+					//do_settings_sections("onepage-theme-options");
+					warning_about_shortcode();
+					//submit_button();
 				?>
 				<?php
-					//$selected_page = get_option( 'pegasus_onepage_page_select' );
-					//echo $selected_page;
+					$selected_pages = get_option( 'pegasus_onepage_page_select', array() );
+					//var_dump( $selected_pages );
 				?>
 			</form>
 		</div>
@@ -229,6 +230,19 @@ Domain Path: /languages
 		return $html;
 	}
 
+	function warning_about_shortcode() {
+		?>
+		<div class="notice notice-warning">
+			<?php /*
+			<p><?php _e( 'PLEASE MAKE SURE YOU INCLUDE THE ' . htmlspecialchars('[section]content[/section]') .
+			' SHORTCODE ON THE PAGE YOU WANT IT TO RENDER ON.', 'pegasus' ); ?></p> */ ?>
+			<p><?php _e( 'Add Pegasus OnePage to your website by adding the following shortcode to one of your pages: ' .
+			htmlspecialchars('[section id="section-1" class="section-container" bkg_color="#dedede" text_color="#000000" image=""]content[/section]') .
+			' .', 'pegasus' ); ?></p>
+		</div>
+		<?php
+	}
+
 	add_filter( 'body_class', function( $classes ) {
 		return array_merge( $classes, array( 'scroll-active' ) );
 	} );
@@ -241,15 +255,34 @@ Domain Path: /languages
 	add_action( 'wp_enqueue_scripts', 'pegasus_one_page_plugin_styles' );
 
 
-	function onepage_page_select_option() { ?>
-		<select name="pegasus_onepage_page_select">
+	function onepage_page_select_option() {
+		/*
+		$pages = get_pages();
+		$selected_pages = get_option('pegasus_onepage_page_select', array());
+
+		//var_dump( $selected_pages);
+
+		if (!is_array($selected_pages)) {
+			$selected_pages = array();
+		}
+
+		echo '<select name="pegasus_onepage_page_select[]" multiple="multiple" style="min-height: 500px">';
+		foreach ($pages as $page) {
+			$selected = in_array($page->ID, $selected_pages) ? 'selected="selected"' : '';
+			echo '<option value="' . esc_attr($page->ID) . '" ' . $selected . '>' . esc_html($page->post_title) . '</option>';
+		}
+		echo '</select>';
+		*/
+		?>
+		<?php /*
+		<select name="pegasus_onepage_page_select[]" multiple="multiple">
 			<option selected="selected" disabled="disabled" value=""><?php echo esc_attr( __( 'Select page' ) ); ?></option>
 			<?php
-				$selected_page = get_option( 'pegasus_onepage_page_select' );
+				$selected_page = get_option( 'pegasus_onepage_page_select', array() );
 				$pages = get_pages();
 				foreach ( $pages as $page ) {
 					$option = '<option value="' . $page->ID . '" ';
-					$option .= ( $page->ID == $selected_page ) ? 'selected="selected"' : '';
+					$option .= ( in_array( $page->ID, $selected_page ) ) ? 'selected="selected"' : '';
 					$option .= '>';
 					$option .= $page->post_title;
 					$option .= '</option>';
@@ -257,7 +290,7 @@ Domain Path: /languages
 				}
 			?>
 		</select>
-
+		*/ ?>
 
 		<?php
 	}
@@ -266,19 +299,29 @@ Domain Path: /languages
 	function display_onepage_plugin_panel_fields() {
 		add_settings_section("onepage_section", "Shortcode Settings", null, "onepage-theme-options");
 
-		add_settings_field("pegasus_onepage_page_select", "Select page to render on:", "onepage_page_select_option", "onepage-theme-options", "onepage_section");
+		//add_settings_field("pegasus_onepage_page_select", "Select page to render on:", "onepage_page_select_option", "onepage-theme-options", "onepage_section");
 
 		//================
 		//REGISTER SETTINGS
 		//=================
 
-		register_setting("onepage_section", "pegasus_onepage_page_select");
+		//register_setting("onepage_section", "pegasus_onepage_page_select");
+		// register_setting("onepage_section", "pegasus_onepage_page_select", array(
+		// 	'type' => 'array',
+		// 	'sanitize_callback' => 'pegasus_sanitize_page_select'
+		// ));
 
 	}
 	add_action("admin_init", "display_onepage_plugin_panel_fields");
 
-
-
+	/*
+	function pegasus_sanitize_page_select($input) {
+		// Ensure the input is an array
+		if (!is_array($input)) {
+			$input = array();
+		}
+		return array_map('intval', $input);
+	} */
 
 	/**
 	* Proper way to enqueue JS
@@ -288,23 +331,33 @@ Domain Path: /languages
 		//wp_enqueue_script( 'one-page-scroll-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/jquery.onepage-scroll.js', array( 'jquery' ), null, true );
 		//wp_enqueue_script( 'snap-scroll-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/jquery.snapscroll.js', array( 'jquery' ), null, true );
 
-		$selected_page = get_option( 'pegasus_onepage_page_select' );
+		//$selected_page = get_option( 'pegasus_onepage_page_select', array() );
+		//$selected_pages = get_option( 'pegasus_onepage_page_select', array() );
 
-		$check_page_value = ( isset($selected_page) ? $selected_page : 'home' );
+		//var_dump( $selected_pages );
 
-		//convert to int
-		$check_page_value = intval( $check_page_value );
+		//$check_page_value = ( isset($selected_page) ? $selected_page : 'home' );
+		// if (!is_array($selected_pages)) {
+		// 	$selected_pages = array( 'home' );
+		// }
 
-		var_dump( $check_page_value);
+		// foreach ( $selected_pages as $selected_page ) {
+		// 	//convert to int
+		// 	$selected_page = intval( $selected_page );
+		// 	var_dump( $selected_page );
+		// 	if ( is_page( 138 ) || is_page( 152 ) ) {
+		// 		var_dump( "jimbo");
+		// 	}
 
+		// }
 
-		if ( is_page( $check_page_value ) ) {
-			wp_register_script( 'scrollspy-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/scrollspy.js', array( 'jquery' ), '0.1.2', 'all' );
+		//if ( is_page( $selected_pages ) ) {
+			wp_register_script( 'scrollspy', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/scrollspy.js', array( 'jquery' ), '0.1.2', 'all' );
 
-			wp_register_script( 'scrollify-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/scrollify.js', array( 'jquery' ), '1.0.22', 'all' );
+			wp_register_script( 'scrollify', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/scrollify.js', array( 'jquery' ), '1.0.22', 'all' );
 
-			wp_register_script( 'pegasus-one-page-plugin-js', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/plugin.js', array( 'jquery' ), null, 'all' );
-		}
+			wp_register_script( 'pegasus-one-page-plugin', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/pegasus-onepage-plugin.js', array( 'jquery' ), null, 'all' );
+		//}
 	} //end function
 
 	add_action( 'wp_enqueue_scripts', 'pegasus_one_page_plugin_js' );
@@ -320,12 +373,13 @@ Domain Path: /languages
 	function onepage_meta_init() {
 		// add a meta box for WordPress 'project' type
 		//add_meta_box('onepage_meta', 'onepage Options', 'onepage_meta_setup', 'onepage', 'side', 'high');
-		add_meta_box('onepage_meta', 'OnePage plugin Options', 'onepage_meta_setup', 'page', 'normal', 'high');
+		//add_meta_box('onepage_meta', 'OnePage plugin Options', 'onepage_meta_setup', 'page', 'normal', 'high');
 
 		// add a callback function to save any data a user enters in
 		add_action('save_post','onepage_meta_save');
 	}
 
+	/*
 	function onepage_meta_setup() {
 		global $post;
 
@@ -345,7 +399,7 @@ Domain Path: /languages
 
 		// create for validation
 		echo '<input type="hidden" name="meta_noncename" value="' . wp_create_nonce(__FILE__) . '" />';
-	}
+	} */
 
 	function onepage_meta_save($post_id) {
 		// check nonce
@@ -367,7 +421,12 @@ Domain Path: /languages
 			return $post_id;
 		}
 
-
+		// Save the selected pages
+		if (isset($_POST['pegasus_onepage_page_select'])) {
+			update_option('pegasus_onepage_page_select', $_POST['pegasus_onepage_page_select']);
+		} else {
+			delete_option('pegasus_onepage_page_select');
+		}
 
 		// Checks for input and saves
 		if( isset( $_POST[ '_onepage_option' ] ) ) {
@@ -392,22 +451,29 @@ Domain Path: /languages
 			'id' => '#',
 			'class' => '',
 			'bkg_color' => '',
-			'image' => ""
+			'text_color' => '',
+			'image' => ''
 		), $atts );
 
 		$id_chk = "{$a['id']}";
+		//$id_chk = $a['id'];
 		$class_chk = "{$a['class']}";
 		$bkg_color_chk = "{$a['bkg_color']}";
+		$text_color_chk = "{$a['text_color']}";
 		$bkg_img_chk = "{$a['image']}";
+
+		if ( $text_color_chk ) {
+			$text_color_chk = ( "" !== $text_color_chk ) ? "color: {$a['text_color']};" : "";
+		}
 
 		$output = '';
 
 		if( $bkg_img_chk ) {
-			$output .= "<section id='{$a['id']}' class='side {$a['class']}' style='background: url({$a['image']}) no-repeat center center;' >";
+			$output .= "<section id='{$id_chk}' class='side {$class_chk}' style='background: url({$bkg_img_chk}) no-repeat center center; {$text_color_chk}' >";
 		} elseif ( $bkg_color_chk ) {
-			$output .= "<section id='{$a['id']}' class='side {$a['class']}' style='background: {$a['bkg_color']};' >";
+			$output .= "<section id='{$id_chk}' class='side {$class_chk}' style='background: {$bkg_color_chk}; {$text_color_chk}' >";
 		} else {
-			$output .= "<section id='{$a['id']}' class='side {$a['class']}'>";
+			$output .= "<section id='{$id_chk}' class='side {$class_chk}' style='{$text_color_chk}'>";
 		}
 			$output .= "<div class='section-container'>";
 				$output .= do_shortcode( $content );
@@ -416,9 +482,9 @@ Domain Path: /languages
 
 
 		wp_enqueue_style( 'one-page-css' );
-		wp_enqueue_script( 'scrollspy-js' );
-		wp_enqueue_script( 'scrollify-js' );
-		wp_enqueue_script( 'pegasus-one-page-plugin-js' );
+		wp_enqueue_script( 'scrollspy' );
+		wp_enqueue_script( 'scrollify' );
+		wp_enqueue_script( 'pegasus-one-page-plugin' );
 
 		return $output;
 	}
